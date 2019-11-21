@@ -17,8 +17,14 @@ const promiseQueue = new PQueue({ concurrency: 1 });
 let latestCursor = "0";
 let latestCreatedAt = "";
 
-const motorRight = servo(18);
-const motorLeft = servo(23);
+const motorLeft = servo(
+  18,
+  process.env.TURN_SPEED_1 ? Number(process.env.TURN_SPEED_1) : 100
+);
+const motorRight = servo(
+  23,
+  process.env.TURN_SPEED_2 ? Number(process.env.TURN_SPEED_2) : 100
+);
 
 async function listenForTransactions() {
   server
