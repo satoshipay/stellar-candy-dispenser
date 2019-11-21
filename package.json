@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "NODE_ENV=production node src/index.js",
-    "dev": "NODE_ENV=development node src/index.js"
+    "dev": "NODE_ENV=development forever start src/index.js",
+    "test-left": "MOTOR=1 node src/test-motors.js",
+    "test-right": "MOTOR=2 node src/test-motors.js"
   },
   "contributors": [
     {
