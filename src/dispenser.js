@@ -2,8 +2,10 @@ const { default: PQueue } = require("p-queue");
 
 const promiseQueue = new PQueue({ concurrency: 1 });
 
+const polledTransactionsCap = 3
+
 let latestCursor = "0";
-let latestCreatedAt = "";
+let latestCreatedAt = "0";
 
 module.exports = async function init(motor, accountID, server) {
   await initialFetch();
@@ -20,11 +22,12 @@ module.exports = async function init(motor, accountID, server) {
       .forAccount(accountID)
       .cursor(initialCursor)
       .stream({
-        onmessage: function(transaction) {
+        onmessage (transaction) {
           console.log("Received transaction via stream:", transaction.id)
 
           if (
-            Date.parse(latestCreatedAt) < Date.parse(transaction.created_at)
+            Date.parse(transaction.created_at) > Date.parse(latestCreatedAt) &&
+            Date.parse(transaction.created_at) > Date.now() - 30000
           ) {
             latestCursor = transaction.paging_token;
             latestCreatedAt = transaction.created_at;
@@ -54,6 +57,7 @@ module.exports = async function init(motor, accountID, server) {
       }
 
       if (containsValidPaymentOperation) {
+        console.log("Valid transaction. Dispensing...");
         await motor.executeTurn();
       } else {
         console.log(
@@ -69,14 +73,22 @@ module.exports = async function init(motor, accountID, server) {
   }
 
   async function pollTransactions() {
-    const { records } = await server
+    let { records } = await server
       .transactions()
       .forAccount(accountID)
       .cursor(latestCursor)
       .order("asc")
       .call();
 
-    console.log("Polled transactions:", records.map(record => record.id));
+    console.log(
+      `Polled transactions since cursor ${latestCursor}:`,
+      records.map(record => record.id)
+    );
+
+    if (records.length > polledTransactionsCap) {
+      console.log(`Polled ${records.length} transactions. Trimming down to 3.`)
+      records = records.slice(-polledTransactionsCap)
+    }
 
     records.forEach(transaction => {
       if (Date.parse(latestCreatedAt) < Date.parse(transaction.created_at)) {
@@ -89,7 +101,7 @@ module.exports = async function init(motor, accountID, server) {
     });
 
     if (records.length > 0) {
-      const latestTransaction = records[0];
+      const latestTransaction = records[records.length - 1];
       latestCursor = latestTransaction.paging_token;
       latestCreatedAt = latestTransaction.created_at;
     }
