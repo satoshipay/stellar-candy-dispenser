@@ -37,6 +37,14 @@ sudo npm start
 
 Try `npm install --unsafe-perm`.
 
+#### Auto-start application on boot
+In order to make the application start automatically on every boot, we registered a new service called `stellar-candy-dispenser`.
+
+1. Create a new file for the service in the `/etc/init.d/` directory and open it (`sudo nano /etc/init.d/stellar-candy-dispenser`).
+2. Use [this](etc/init.d/stellar-candy-dispenser) and replace the `dir` and `PATH` to fit the needs of your local installation.
+3. To register your new service call `sudo update-rc.d stellar-candy-dispenser defaults`.
+4. Afterwards you can control the service with `sudo service stellar-candy-dispenser start/stop/restart/status`.
+
 ## License
 
 MIT
