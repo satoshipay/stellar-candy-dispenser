@@ -1,10 +1,7 @@
 // source: https://github.com/fivdi/pigpio#servo-control
 
 const Gpio = require("pigpio").Gpio;
-
-function sleep(milliseconds) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
-}
+const sleep = require("./utils")
 
 module.exports = function(gpioNumber, { speed, duration, alternations }) {
   const motor = new Gpio(gpioNumber, { mode: Gpio.OUTPUT });

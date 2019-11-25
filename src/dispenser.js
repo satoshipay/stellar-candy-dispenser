@@ -1,13 +1,14 @@
 const { default: PQueue } = require("p-queue");
+const { sleep } = require("./utils")
 
 const promiseQueue = new PQueue({ concurrency: 1 });
 
 const polledTransactionsCap = 3
 
-let latestCursor = "0";
-let latestCreatedAt = "0";
-
 module.exports = async function init(motor, accountID, server) {
+  let latestCursor = "0";
+  let latestCreatedAt = "0";
+
   await initialFetch();
 
   listenForTransactions(latestCursor);
@@ -59,6 +60,7 @@ module.exports = async function init(motor, accountID, server) {
       if (containsValidPaymentOperation) {
         console.log("Valid transaction. Dispensing...");
         await motor.executeTurn();
+        await sleep(5000)
       } else {
         console.log(
           `Transaction ${transaction.id} does not contain a valid payment operation`
@@ -122,7 +124,7 @@ module.exports = async function init(motor, accountID, server) {
       latestCreatedAt = latestTransaction.created_at;
 
       console.log(
-        "Set latestTransaction info to",
+        `Set latestTransaction info for account ${accountID} to`,
         latestCursor,
         latestCreatedAt
       );
