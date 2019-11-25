@@ -2,6 +2,10 @@
 
 const Gpio = require("pigpio").Gpio;
 
+function sleep(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
 module.exports = function(gpioNumber, { speed, duration, alternations }) {
   const motor = new Gpio(gpioNumber, { mode: Gpio.OUTPUT });
 
@@ -18,22 +22,22 @@ module.exports = function(gpioNumber, { speed, duration, alternations }) {
   }
 
   async function executeTurn() {
-    return new Promise(resolve => {
+    return new Promise(async resolve => {
       motor.servoWrite(basePulseWidth);
 
-      const interval = setInterval(() => {
-        if (motor.getServoPulseWidth() === rightTorque) {
-          turnLeft();
-        } else {
-          turnRight();
-        }
-      }, duration / alternations);
+      const durationPerAlternation = duration / alternations;
 
-      setTimeout(() => {
-        clearInterval(interval);
-        motor.servoWrite(0);
-        resolve();
-      }, duration);
+      for (let i = 0; i < alternations; i++) {
+        if (i % 2 === 0) {
+          turnRight();
+        } else {
+          turnLeft();
+        }
+        await sleep(durationPerAlternation);
+      }
+
+      motor.servoWrite(0)
+      resolve()
     });
   }
 
