@@ -23,6 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "ms": "^2.1.2",
     "p-queue": "^6.2.1",
     "pigpio": "^2.0.1",
     "stellar-sdk": "^3.3.0"
