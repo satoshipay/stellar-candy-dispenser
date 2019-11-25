@@ -2,11 +2,11 @@
 
 const Gpio = require("pigpio").Gpio;
 
-module.exports = function(gpioNumber, speed = 100) {
+module.exports = function(gpioNumber, { speed, duration, alternations }) {
   const motor = new Gpio(gpioNumber, { mode: Gpio.OUTPUT });
 
   const basePulseWidth = 500 + (2500 - 500) / 2;
-  const rightTorque = basePulseWidth + speed + 50;
+  const rightTorque = Math.round(basePulseWidth + speed + speed / 2);
   const leftTorque = basePulseWidth - speed;
 
   function turnRight() {
@@ -27,13 +27,13 @@ module.exports = function(gpioNumber, speed = 100) {
         } else {
           turnRight();
         }
-      }, 1000);
+      }, duration / alternations);
 
       setTimeout(() => {
         clearInterval(interval);
         motor.servoWrite(0);
         resolve();
-      }, 5000);
+      }, duration);
     });
   }
 

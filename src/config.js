@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+const ms = require("ms");
+
 const production = process.env.NODE_ENV === "production";
 
 const accountID1 = production
@@ -10,12 +12,8 @@ const accountID2 = production
   ? process.env.ACCOUNT_PUBLIC_KEY_2
   : process.env.TEST_PUBLIC_KEY_2;
 
-const turnSpeedMotor1 = process.env.TURN_SPEED_1
-  ? Number.parseFloat(process.env.TURN_SPEED_1)
-  : 100;
-const turnSpeedMotor2 = process.env.TURN_SPEED_2
-  ? Number.parseFloat(process.env.TURN_SPEED_2)
-  : 100;
+const motorConfigLeft = parseMotorConfig(process.env.MOTOR_CONFIG_LEFT || "");
+const motorConfigRight = parseMotorConfig(process.env.MOTOR_CONFIG_RIGHT || "");
 
 const horizonURL =
   process.env.NODE_ENV === "production"
@@ -26,6 +24,17 @@ module.exports = {
   accountID1,
   accountID2,
   horizonURL,
-  turnSpeedMotor1,
-  turnSpeedMotor2
+  motorConfigLeft,
+  motorConfigRight
 };
+
+function parseMotorConfig(config) {
+  const [speed = "100", duration = "5s", alternations = "5"] = config.split(
+    ":"
+  );
+  return {
+    speed: Number.parseInt(speed, 10),
+    duration: ms(duration),
+    alternations: Number.parseInt(alternations, 10)
+  };
+}
