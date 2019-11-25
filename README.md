@@ -31,19 +31,27 @@ Run the program in production and on mainnet:
 sudo npm start
 ```
 
-## Gotchas
+## Auto-start application on boot
 
-#### Permission errors on `npm install`
-
-Try `npm install --unsafe-perm`.
-
-#### Auto-start application on boot
 In order to make the application start automatically on every boot, we registered a new service called `stellar-candy-dispenser`.
 
 1. Create a new file for the service in the `/etc/init.d/` directory and open it (`sudo nano /etc/init.d/stellar-candy-dispenser`).
 2. Use [this](etc/init.d/stellar-candy-dispenser) and replace the `dir` and `PATH` to fit the needs of your local installation.
 3. To register your new service call `sudo update-rc.d stellar-candy-dispenser defaults`.
 4. Afterwards you can control the service with `sudo service stellar-candy-dispenser start/stop/restart/status`.
+
+## Gotchas
+
+#### Permission errors on `npm install`
+
+Try `npm install --unsafe-perm`.
+
+#### Runtime `pigpio` errors
+
+If you run into errors like ` Can't lock /var/run/pigpio.pid` and `Error: pigpio error -1 in gpioInitialise;` while trying to start the application, make sure that the application is not currently running in background because of the service (as only one instance can run at a time because of the access to `pigpio`). 
+
+Stop the service with `sudo service stellar-candy-dispenser stop` and check in the service status (`sudo service stellar-candy-dispenser status`) that no other processes are listed in `CGroup`. If processes are still running after you stopped the service you can kill them manually with `kill 'pid'`.
+
 
 ## License
 
