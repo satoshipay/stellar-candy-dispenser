@@ -15,6 +15,9 @@ const accountID2 = production
 const motorConfigLeft = parseMotorConfig(process.env.MOTOR_CONFIG_LEFT || "");
 const motorConfigRight = parseMotorConfig(process.env.MOTOR_CONFIG_RIGHT || "");
 
+const priceLeft = Number.parseFloat(process.env.PRICE_LEFT)
+const priceRight = Number.parseFloat(process.env.PRICE_RIGHT)
+
 const horizonURL =
   process.env.NODE_ENV === "production"
     ? "https://horizon.stellar.org"
@@ -25,7 +28,9 @@ module.exports = {
   accountID2,
   horizonURL,
   motorConfigLeft,
-  motorConfigRight
+  motorConfigRight,
+  priceLeft,
+  priceRight
 };
 
 function parseMotorConfig(config) {

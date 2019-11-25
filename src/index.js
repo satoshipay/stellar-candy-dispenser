@@ -8,5 +8,5 @@ const server = new StellarSdk.Server(config.horizonURL);
 const motorLeft = servo(18, config.motorConfigLeft);
 const motorRight = servo(23, config.motorConfigRight);
 
-dispenser(motorLeft, config.accountID1, server);
-dispenser(motorRight, config.accountID2, server);
+dispenser(motorLeft, config.accountID1, server, config.priceLeft);
+dispenser(motorRight, config.accountID2, server, config.priceRight);

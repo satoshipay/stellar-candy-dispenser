@@ -5,7 +5,7 @@ const promiseQueue = new PQueue({ concurrency: 1 });
 
 const polledTransactionsCap = 3
 
-module.exports = async function init(motor, accountID, server) {
+module.exports = async function init(motor, accountID, server, price) {
   let latestCursor = "0";
   let latestCreatedAt = "0";
 
@@ -51,7 +51,7 @@ module.exports = async function init(motor, accountID, server) {
         if (
           operation.to === accountID &&
           operation.type === "payment" &&
-          Number(operation.amount) >= 1
+          Number.parseFloat(operation.amount) >= price
         ) {
           containsValidPaymentOperation = true;
         }
@@ -62,7 +62,7 @@ module.exports = async function init(motor, accountID, server) {
         await motor.executeTurn();
         await sleep(5000)
       } else {
-        console.log(
+        console.warn(
           `Transaction ${transaction.id} does not contain a valid payment operation`
         );
       }

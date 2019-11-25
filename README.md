@@ -31,6 +31,26 @@ Run the program in production and on mainnet:
 sudo npm start
 ```
 
+## Configuration
+
+Create a `.env` file in the project directory.
+
+```
+ACCOUNT_PUBLIC_KEY_1=G…
+ACCOUNT_PUBLIC_KEY_2=G…
+
+TEST_ACCOUNT_PUBLIC_KEY_1=G…
+TEST_ACCOUNT_PUBLIC_KEY_2=G…
+
+# Motor config format: <speed>:<duration><alternations>
+
+MOTOR_CONFIG_LEFT=30:2s:1       # This motor config is good for M&Ms
+MOTOR_CONFIG_RIGHT=40:4.5s:3    # Pistacios
+
+PRICE_LEFT=5
+PRICE_RIGHT=5
+```
+
 ## Auto-start application on boot
 
 In order to make the application start automatically on every boot, we registered a new service called `stellar-candy-dispenser`.
@@ -48,7 +68,7 @@ Try `npm install --unsafe-perm`.
 
 #### Runtime `pigpio` errors
 
-If you run into errors like ` Can't lock /var/run/pigpio.pid` and `Error: pigpio error -1 in gpioInitialise;` while trying to start the application, make sure that the application is not currently running in background because of the service (as only one instance can run at a time because of the access to `pigpio`). 
+If you run into errors like ` Can't lock /var/run/pigpio.pid` and `Error: pigpio error -1 in gpioInitialise;` while trying to start the application, make sure that the application is not currently running in background because of the service (as only one instance can run at a time because of the access to `pigpio`).
 
 Stop the service with `sudo service stellar-candy-dispenser stop` and check in the service status (`sudo service stellar-candy-dispenser status`) that no other processes are listed in `CGroup`. If processes are still running after you stopped the service you can kill them manually with `kill 'pid'`.
 
