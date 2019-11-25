@@ -1,10 +1,21 @@
 require("dotenv").config();
 
-const accountID1 = process.env.ACCOUNT_PUBLIC_KEY_1;
-const accountID2 = process.env.ACCOUNT_PUBLIC_KEY_2;
+const production = process.env.NODE_ENV === "production";
 
-const turnSpeedMotor1 = process.env.TURN_SPEED_1 ? Number.parseFloat(process.env.TURN_SPEED_1) : 100
-const turnSpeedMotor2 = process.env.TURN_SPEED_2 ? Number.parseFloat(process.env.TURN_SPEED_2) : 100
+const accountID1 = production
+  ? process.env.ACCOUNT_PUBLIC_KEY_1
+  : process.env.TEST_PUBLIC_KEY_1;
+
+const accountID2 = production
+  ? process.env.ACCOUNT_PUBLIC_KEY_2
+  : process.env.TEST_PUBLIC_KEY_2;
+
+const turnSpeedMotor1 = process.env.TURN_SPEED_1
+  ? Number.parseFloat(process.env.TURN_SPEED_1)
+  : 100;
+const turnSpeedMotor2 = process.env.TURN_SPEED_2
+  ? Number.parseFloat(process.env.TURN_SPEED_2)
+  : 100;
 
 const horizonURL =
   process.env.NODE_ENV === "production"
