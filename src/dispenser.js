@@ -1,9 +1,18 @@
 const { default: PQueue } = require("p-queue");
-const { sleep } = require("./utils")
+const { color, createLEDController } = require("./leds");
+const { sleep } = require("./utils");
 
+const leds = createLEDController();
 const promiseQueue = new PQueue({ concurrency: 1 });
 
+const brandColor = color(0, 88, 205);
 const polledTransactionsCap = 3
+
+const showIdlePulse = () => leds.pulse(brandColor, 5000, 0.3, 1);
+const showSpinner = () => leds.spin(brandColor, 1500);
+
+showIdlePulse();
+promiseQueue.on("active", () => showSpinner());
 
 module.exports = async function init(motor, accountID, server, price) {
   let latestCursor = "0";
@@ -60,7 +69,9 @@ module.exports = async function init(motor, accountID, server, price) {
       if (containsValidPaymentOperation) {
         console.log("Valid transaction. Dispensing...");
         await motor.executeTurn();
-        await sleep(5000)
+        leds.setAll(color(128, 128, 0));
+        await sleep(5000);
+        showIdlePulse();
       } else {
         console.warn(
           `Transaction ${transaction.id} does not contain a valid payment operation`

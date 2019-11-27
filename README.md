@@ -7,6 +7,8 @@ git clone git@github.com:satoshipay/stellar-candy-dispenser.git
 npm install
 ```
 
+Use with node 8, please. The `rpi-ws281x-v2` package that controls the LEDs doesn't build on latest node versions.
+
 ## Deploy
 
 In our case we just launched an SSH server on the Raspberry and added our `~/.ssh/id_rsa.pub` to the Raspberry user's `~/.ssh/authorized_keys`.
